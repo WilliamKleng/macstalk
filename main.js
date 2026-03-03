@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Debounce utility
+
+  // Función auxiliar para evitar que un evento se ejecute demasiadas veces seguidas
   const debounce = (func, delay) => {
     let timeoutId;
     return function(...args) {
@@ -8,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   };
 
-  // 1. SCROLL REVEAL
+  // Animaciones al hacer scroll: los elementos aparecen cuando entran en pantalla
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { 
       if (e.isIntersecting) {
@@ -19,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  // 2. FAQ ACORDEÓN
+  // Acordeón de preguntas frecuentes
   const faqButtons = document.querySelectorAll('.faq-q');
   faqButtons.forEach(button => {
     button.addEventListener('click', function() {
@@ -28,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const icon = faqItem.querySelector('.faq-icon');
       const isOpen = answer.classList.contains('open');
 
-      // Cerrar todos los demás
+      // Cierra las demás preguntas antes de abrir la seleccionada
       document.querySelectorAll('.faq-a').forEach(a => {
         if (a !== answer) a.classList.remove('open');
       });
@@ -39,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (q !== this) q.setAttribute('aria-expanded', 'false');
       });
 
-      // Toggle el actual
+      // Abre o cierra la pregunta actual
       if (!isOpen) { 
         answer.classList.add('open'); 
         icon.classList.add('rot'); 
@@ -51,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Soporte para keyboard
+    // Permite abrir/cerrar con teclado (Enter o Espacio)
     button.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
@@ -60,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 3. FORMULARIO DE CONTACTO
+  // Formulario de contacto: validación y envío
   const contactForm = document.getElementById('contactForm');
   const submitBtn = document.getElementById('submitBtn');
   const formMessage = document.getElementById('formMessage');
@@ -81,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Validación de email en tiempo real
+  // Validación del email cuando el usuario sale del campo
   const emailInput = document.getElementById('user-email');
   const emailError = document.getElementById('error-email');
   
@@ -105,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Validación de teléfono (Argentina)
+  // Validación del teléfono (formato argentino)
   const phoneInput = document.getElementById('user-phone');
   const phoneError = document.getElementById('error-whatsapp');
   
@@ -133,11 +134,10 @@ document.addEventListener('DOMContentLoaded', () => {
     contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      // Validar
-      // Limpiar mensajes de error previos
+      // Limpia los errores anteriores antes de validar
       document.querySelectorAll('.form-error').forEach(span => span.textContent = '');
 
-      // Validar con nuestra propia lógica
+      // Verifica que todos los campos obligatorios estén completos
       if (!contactForm.checkValidity()) {
         contactForm.querySelectorAll(':invalid').forEach(input => {
           const errorSpan = document.getElementById(`error-${input.name}`);
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       
-      // Validar regex personalizadas
+      // Verifica el formato del email y teléfono
       if (!validateEmail() || !validatePhone()) {
         formMessage.textContent = 'Por favor, revisá el formato del email o teléfono.';
         formMessage.classList.add('error');
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const formData = new FormData(contactForm);
 
-      // UI: Loading state
+      // Muestra el estado de carga en el botón mientras se envía
       submitBtn.classList.add('loading');
       submitBtn.disabled = true;
       formMessage.textContent = '';
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
           contactForm.reset();
           submitBtn.classList.remove('loading');
 
-          // Abrir Calendly después de 1.5s
+          // Abre Calendly después de 1.5 segundos para agendar la nivelación
           setTimeout(() => {
             try {
               if (window.Calendly) {
@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 4. NAVEGACIÓN (Scroll compacto)
+  // Barra de navegación: se compacta al hacer scroll
   const nav = document.getElementById('mainNav');
   if (nav) {
     const handleNavScroll = debounce(() => {
@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', handleNavScroll);
   }
 
-  // 5. EFECTO 3D EN TARJETA HERO
+  // Efecto 3D en la tarjeta de la sección principal (sigue el mouse)
   const card = document.querySelector('.card-3d');
   if (card) {
     card.addEventListener('mousemove', (e) => {
@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 6. SCROLL SUAVE (Botones)
+  // Scroll suave: al hacer clic en un botón, baja hasta la sección correspondiente
   const scrollButtons = document.querySelectorAll('button[data-scroll-to]');
   scrollButtons.forEach(btn => {
     btn.addEventListener('click', function() {
@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 6b. HAMBURGER MENU MOBILE
+  // Menú hamburguesa para celulares y tablets
   const hamburger = document.getElementById('hamburger');
   const navLinks = document.getElementById('navLinks');
   const mobileOverlay = document.getElementById('mobileOverlay');
@@ -276,13 +276,13 @@ document.addEventListener('DOMContentLoaded', () => {
       mobileOverlay.addEventListener('click', () => toggleMenu(false));
     }
 
-    // Cerrar el menú al hacer click en un link
+    // Cierra el menú automáticamente al tocar un enlace
     navLinks.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => toggleMenu(false));
     });
   }
 
-  // 7. LÓGICA DEL MODAL DE CURSOS
+  // Modal de cursos: muestra los detalles de cada curso al hacer clic
   const courseDetails = {
     "Conversación & Fluidez": "Este curso está diseñado para romper la barrera del miedo a hablar. Trabajaremos con debates, role-plays y situaciones reales. Ideal para quienes entienden el idioma al leerlo pero se bloquean al intentar comunicarse oralmente.",
     "Exámenes Internacionales": "Programa intensivo enfocado 100% en estrategias para rendir. Hacemos simulacros cronometrados, analizamos la estructura de los exámenes y te enseñamos exactamente qué buscan los evaluadores en cada habilidad.",
@@ -302,12 +302,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let lastFocusedElement = null;
 
   if (modal) {
-    // Focusable elements dentro del modal
+    // Obtiene los elementos enfocables dentro del modal (para accesibilidad)
     const getFocusableElements = () => modal.querySelectorAll(
       'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
     );
 
-    // Focus trap
+    // Atrapa el foco dentro del modal para que no se escape con Tab
     function trapFocus(e) {
       if (e.key !== 'Tab') return;
       const focusable = getFocusableElements();
@@ -327,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Abrir modal al clickear curso
+    // Abre el modal cuando el usuario hace clic en una tarjeta de curso
     document.querySelectorAll('.course-card').forEach(card => {
       const handler = function(e) {
         if (e) e.preventDefault();
@@ -335,22 +335,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const title = this.querySelector('h3').textContent.trim();
         const icon = this.querySelector('.course-glyph').textContent.trim();
 
-        // Inyectar datos
+        // Carga el ícono, título y descripción del curso en el modal
         modalIcon.textContent = icon;
         if (modalTitle) modalTitle.textContent = title;
         if (modalDesc) modalDesc.textContent = courseDetails[title] || 'Próximamente más detalles sobre este curso.';
 
-        // Guardar referencia al elemento que abrió el modal
+        // Guarda qué elemento abrió el modal para devolver el foco después
         lastFocusedElement = document.activeElement;
 
         modal.classList.add('active');
         modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
 
-        // Enviar focus al modal
+        // Envía el foco al botón de cerrar y activa la trampa de foco
         requestAnimationFrame(() => closeModalBtn.focus());
-
-        // Activar focus trap
         modal.addEventListener('keydown', trapFocus);
       };
 
@@ -363,24 +361,22 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Función unificada para cerrar
+    // Cierra el modal y restaura el estado de la página
     function closeModalHandler(e) {
       if (e && e.type !== 'keydown') e.preventDefault();
       modal.classList.remove('active');
       modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
 
-      // Desactivar focus trap
+      // Desactiva la trampa de foco y devuelve el foco al elemento original
       modal.removeEventListener('keydown', trapFocus);
-
-      // Devolver focus al elemento que abrió el modal
       if (lastFocusedElement) {
         lastFocusedElement.focus();
         lastFocusedElement = null;
       }
     }
 
-    // Cerrar modal
+    // Cierra el modal con el botón X, clic fuera, o tecla Escape
     closeModalBtn.addEventListener('click', closeModalHandler);
 
     window.addEventListener('click', (e) => {
@@ -389,14 +385,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Cerrar con ESC
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && modal.classList.contains('active')) {
         closeModalHandler(e);
       }
     });
 
-    // CTA del modal → llevar al formulario con curso pre-seleccionado
+    // Botón "Quiero inscribirme": cierra el modal y baja al formulario con el curso elegido
     if (modalCta) {
       modalCta.addEventListener('click', () => {
         const courseName = modalTitle ? modalTitle.textContent.trim() : '';
@@ -410,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Soporte para flechas en cursos (keyboard)
+  // Permite abrir el detalle del curso con Enter desde la flecha
   document.querySelectorAll('.course-arrow').forEach(arrow => {
     arrow.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
